@@ -1,5 +1,7 @@
 
 empty_sign = '-'
+
+
 class Board:
     def __init__(self):
         self.board = [[empty_sign for _ in range(9)] for _ in range(9)]
@@ -43,4 +45,3 @@ if __name__ == '__main__':
     board.set_cell(5, 5, 2)
     print(board.get_square(1, 1))  # should print ['-', 5, '-', 1, '-', '-', 4, '-', 2]
     print(board.get_column(3))  # should print ['-', '-', '-', '-', 1, 4, '-', '-', '-']
-
