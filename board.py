@@ -1,7 +1,8 @@
 
+empty_sign = '-'
 class Board:
     def __init__(self):
-        self.board = [['-' for _ in range(9)] for _ in range(9)]
+        self.board = [[empty_sign for _ in range(9)] for _ in range(9)]
 
     def get_cell(self, row, column):
         if not (0 <= row <= 8) or not (0 <= column <= 8):
