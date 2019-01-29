@@ -1,4 +1,5 @@
 
+import copy
 empty_sign = '-'
 board_length = 9
 
@@ -46,6 +47,9 @@ class Board:
 
         return [self.board[first_actual_row + r][first_actual_column + c] for r in range(3) for c in range(3)]
 
+    def clone(self):
+        return copy.deepcopy(self.board)
+
 
 if __name__ == '__main__':
     board = Board()
@@ -55,3 +59,4 @@ if __name__ == '__main__':
     board.set_cell(5, 5, 2)
     print(board.get_square(1, 1))  # should print ['-', 5, '-', 1, '-', '-', 4, '-', 2]
     print(board.get_column(3))  # should print ['-', '-', '-', '-', 1, 4, '-', '-', '-']
+
