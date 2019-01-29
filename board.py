@@ -1,30 +1,40 @@
 
 empty_sign = '-'
+board_length = 9
 
 
 class Board:
-    def __init__(self):
-        self.board = [[empty_sign for _ in range(9)] for _ in range(9)]
+    def __init__(self, existing_board=None):
+        if existing_board is None:
+            self.board = [[empty_sign for _ in range(board_length)] for _ in range(board_length)]
+        else:
+            self.board = existing_board
 
     def get_cell(self, row, column):
-        if not (0 <= row <= 8) or not (0 <= column <= 8):
+        if not (0 <= row <= board_length - 1) or not (0 <= column <= board_length - 1):
             raise ValueError("Entered an invalid row or column: ({}, {})".format(row, column))
         return self.board[row][column]
 
     def set_cell(self, row, column, value):
-        if not (0 <= row <= 8) or not (0 <= column <= 8):
+        if not (0 <= row <= board_length - 1) or not (0 <= column <= board_length - 1):
             raise ValueError("Entered an invalid row or column: ({}, {})".format(row, column))
-        if value > 9 or value < 1:
-            raise ValueError("Entered an invalid cell value: {}".format(value))
+        if value > board_length or value < 1:
+            raise ValueError("Entered an invalid cell value: {} for ({}, {})".format(value, row, column))
         self.board[row][column] = value
 
+    def clear_cell(self, row, column):
+        self.board[row][column] = empty_sign
+
+    def is_cell_empty(self, row, column):
+        return self.board[row][column] == empty_sign
+
     def get_row(self, row):
-        if row < 0 or row > 8:
+        if row < 0 or row > board_length - 1:
             raise ValueError("Entered an invalid row: {}".format(row))
         return self.board[row].copy()
 
     def get_column(self, column):
-        if column < 0 or column > 8:
+        if column < 0 or column > board_length - 1:
             raise ValueError("Entered an invalid column: {}".format(column))
         return [self.board[row][column] for row in range(len(self.board))]
 
