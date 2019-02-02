@@ -17,9 +17,11 @@ class Board:
         return self.board[row][column]
 
     def set_cell(self, row, column, value):
-        if not (0 <= row <= board_length - 1) or not (0 <= column <= board_length - 1):
+        if value == empty_sign:
+            self.board[row][column] = value
+        elif not (0 <= row <= board_length - 1) or not (0 <= column <= board_length - 1):
             raise ValueError("Entered an invalid row or column: ({}, {})".format(row, column))
-        if value > board_length or value < 1:
+        elif value > board_length or value < 1:
             raise ValueError("Entered an invalid cell value: {} for ({}, {})".format(value, row, column))
         self.board[row][column] = value
 
