@@ -8,7 +8,7 @@ def recursive_solve_improved(board, row, column, digit, solution):
     solution["iterations"] += 1
     # We have placed all digits in all rows, thus found a solution.
     if row >= board_length:
-        solution["board"] = board.clone()
+        solution["board"] = board.get_all_cells()
         return True
 
     if digit > board_length:
@@ -51,7 +51,7 @@ def recursive_solve_naive(board, row, column, digit, solution):
     solution["iterations"] += 1
     # We have placed all digits in all rows, thus found a solution.
     if digit > board_length:
-        solution["board"] = board.clone()
+        solution["board"] = board.get_all_cells()
         return True
 
     # We have placed the current digit in all rows, move on to the next digit.

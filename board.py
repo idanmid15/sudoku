@@ -47,7 +47,7 @@ class Board:
 
         return [self.board[first_actual_row + r][first_actual_column + c] for r in range(3) for c in range(3)]
 
-    def clone(self):
+    def get_all_cells(self):
         return copy.deepcopy(self.board)
 
 
