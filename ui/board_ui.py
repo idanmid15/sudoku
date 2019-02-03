@@ -7,10 +7,16 @@ from movement import guess_cell_valid
 
 
 def entered_value(x, y):
-    given_num = board_entries[x][y].getint()
+    given_num = int(board_entries[x][y].get())
     if guess_cell_valid(board, x, y, given_num):
         board.set_cell(x, y, given_num)
-        solve_game(board, recursive_solve_improved)
+        if not solve_game(board, recursive_solve_improved):
+            tkinter.messagebox.showinfo("Alert", "The cell value of {} which was entered makes the board unsolvable!"
+                                        .format(given_num))
+            board.set_cell(x, y, empty_sign)
+            board_entries[x][y].delete(0, END)
+            board_entries[x][y].insert(END, empty_sign)
+
     else:
         tkinter.messagebox.showinfo("Alert", "The cell value of {} which was entered is illegal!".format(given_num))
         board.set_cell(x, y, empty_sign)
