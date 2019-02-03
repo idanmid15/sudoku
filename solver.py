@@ -83,10 +83,10 @@ def solve_game(board, solving_func):
     solution = {"iterations": 0, "board": []}
     solving_board = Board(board.get_all_cells())
     if solving_func(solving_board, 0, 0, 1, solution):
-        print("\n".join(str(x) for x in solution["board"]))
-        print("The number of iterations taken to reach the solution: {}".format(solution["iterations"]))
+        return str("\n".join(str(x) for x in solution["board"]) +
+                   "The number of iterations taken to reach the solution: {}".format(solution["iterations"]))
     else:
-        print("No solution found for {}".format(board))
+        raise False
 
 
 if __name__ == '__main__':
