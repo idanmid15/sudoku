@@ -52,6 +52,9 @@ class Board:
     def get_all_cells(self):
         return copy.deepcopy(self.board)
 
+    def is_full(self):
+        return empty_sign not in [item for row in self.board for item in row]
+
 
 if __name__ == '__main__':
     board = Board()
