@@ -79,13 +79,14 @@ def recursive_solve_naive(board, row, column, digit, solution):
         return recursive_solve_naive(board, row, column + 1, digit, solution)
 
 
-def solve_game(board, solving_func):
+def game_solvable(board, solving_func):
     solution = {"iterations": 0, "board": []}
     solving_board = Board(board.get_all_cells())
     if solving_func(solving_board, 0, 0, 1, solution):
         return str("\n".join(str(x) for x in solution["board"]) +
                    "The number of iterations taken to reach the solution: {}".format(solution["iterations"]))
     else:
+        # TODO make sense of the possibility this is not solvable
         raise False
 
 
@@ -110,14 +111,14 @@ if __name__ == '__main__':
                                  ['-', '-', 8, 5, '-', '-', '-', 1, '-'],
                                  ['-', 9, '-', '-', '-', '-', 4, '-', '-']])
     print("A trivial empty board's solution with the naive approach:")
-    solve_game(empty_board, recursive_solve_naive)
+    game_solvable(empty_board, recursive_solve_naive)
     print("A trivial empty board's solution with the improved approach:")
-    solve_game(empty_board, recursive_solve_improved)
+    game_solvable(empty_board, recursive_solve_improved)
     print("An easy board's solution with the naive approach:")
-    solve_game(easy_board, recursive_solve_naive)
+    game_solvable(easy_board, recursive_solve_naive)
     print("An easy board's solution with the improved approach:")
-    solve_game(easy_board, recursive_solve_improved)
+    game_solvable(easy_board, recursive_solve_improved)
     print("The hardest board ever created's solution(this may take some time) with the naive approach:")
-    solve_game(hardest_known_board, recursive_solve_naive)
+    game_solvable(hardest_known_board, recursive_solve_naive)
     print("The hardest board ever created's solution(this may take some time) with the improved approach:")
-    solve_game(hardest_known_board, recursive_solve_improved)
+    game_solvable(hardest_known_board, recursive_solve_improved)
