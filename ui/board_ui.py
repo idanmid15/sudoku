@@ -2,7 +2,7 @@
 from tkinter import *
 import tkinter.messagebox
 from board import Board, empty_sign
-from solver import solve_game, recursive_solve_improved
+from solver import game_solvable, recursive_solve_improved
 from movement import guess_cell_valid
 
 
@@ -10,7 +10,7 @@ def entered_value(x, y):
     given_num = int(board_entries[x][y].get())
     if guess_cell_valid(board, x, y, given_num):
         board.set_cell(x, y, given_num)
-        if not solve_game(board, recursive_solve_improved):
+        if not game_solvable(board, recursive_solve_improved):
             tkinter.messagebox.showinfo("Alert", "The cell value of {} which was entered makes the board unsolvable!"
                                         .format(given_num))
             board.set_cell(x, y, empty_sign)
