@@ -100,7 +100,7 @@ class SudokuUi(Frame):
             if guess_cell_valid(self.board, self.row, self.col, input_num):
                 self.board.set_cell(self.row, self.col, input_num)
                 solver = Solver(self.board)
-                if not solver.game_solvable(solver.recursive_solve_improved):
+                if not solver.game_solvable(implementation="improved"):
                     tkinter.messagebox.showinfo("Alert",
                                                 "The cell value of {} which was entered makes the board unsolvable!"
                                                 .format(input_num))
