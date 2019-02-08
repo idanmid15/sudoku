@@ -3,7 +3,7 @@ from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
 import tkinter.messagebox
 from board import empty_sign, Board
 import copy
-from solver import game_solvable, recursive_solve_improved
+from solver import Solver
 from movement import guess_cell_valid
 
 MARGIN = 20  # Pixels around the board
@@ -99,7 +99,8 @@ class SudokuUi(Frame):
             input_num = int(event.char)
             if guess_cell_valid(self.board, self.row, self.col, input_num):
                 self.board.set_cell(self.row, self.col, input_num)
-                if not game_solvable(self.board, recursive_solve_improved):
+                solver = Solver(self.board)
+                if not solver.game_solvable(solver.recursive_solve_improved):
                     tkinter.messagebox.showinfo("Alert",
                                                 "The cell value of {} which was entered makes the board unsolvable!"
                                                 .format(input_num))

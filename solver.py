@@ -3,36 +3,84 @@ from board import board_length, Board, empty_sign
 from movement import guess_cell_valid
 
 
-def recursive_solve_improved(board, row, column, digit, solution):
+class Solver:
 
-    solution["iterations"] += 1
-    # We have placed all digits in all rows, thus found a solution.
-    if row >= board_length:
-        solution["board"] = board.get_all_cells()
-        return True
+    def __init__(self, board):
+        # Copy the original board so we don't mutate it
+        self.board = Board(board.get_all_cells())
+        self.solution = {"iterations": 0, "board": []}
 
-    if digit > board_length:
-        return recursive_solve_improved(board, find_fullest_row(board), 0, 1, solution)
-    # We could not find a proper cell to place this digit in the current row.
-    if column >= board_length:
-        return False
+    def recursive_solve_improved(self, board, row, column, digit):
 
-    # The digit was already placed in this row, on partially filled board inputs.
-    if board.get_cell(row, column) == digit:
-        return recursive_solve_improved(board, find_fullest_row(board), 0, digit + 1, solution)
+        self.solution["iterations"] += 1
+        # We have placed all digits in all rows, thus found a solution.
+        if row >= board_length:
+            self.solution["board"] = board.get_all_cells()
+            return True
+        if digit > board_length:
+            return self.recursive_solve_improved(board, find_fullest_row(board), 0, 1)
+        # We could not find a proper cell to place this digit in the current row.
+        if column >= board_length:
+            return False
 
-    # It is illegal to place this digit in the cell, try the next one.
-    if not guess_cell_valid(board, row, column, digit):
-        return recursive_solve_improved(board, row, column + 1, digit, solution)
+        # The digit was already placed in this row, on partially filled board inputs.
+        if board.get_cell(row, column) == digit:
+            return self.recursive_solve_improved(board, find_fullest_row(board), 0, digit + 1)
 
-    board.set_cell(row, column, digit)
+        # It is illegal to place this digit in the cell, try the next one.
+        if not guess_cell_valid(board, row, column, digit):
+            return self.recursive_solve_improved(board, row, column + 1, digit)
 
-    # Try solving by placing the digit in the current cell or trying in the next one
-    if recursive_solve_improved(board, row, 0, digit + 1, solution):
-        return True
-    else:
-        board.clear_cell(row, column)
-        return recursive_solve_improved(board, row, column + 1, digit, solution)
+        board.set_cell(row, column, digit)
+
+        # Try solving by placing the digit in the current cell or trying in the next one
+        if self.recursive_solve_improved(board, row, 0, digit + 1):
+            return True
+        else:
+            board.clear_cell(row, column)
+            return self.recursive_solve_improved(board, row, column + 1, digit)
+
+    def recursive_solve_naive(self, board, row, column, digit):
+
+        self.solution["iterations"] += 1
+        # We have placed all digits in all rows, thus found a solution.
+        if digit > board_length:
+            self.solution["board"] = board.get_all_cells()
+            return True
+
+        # We have placed the current digit in all rows, move on to the next digit.
+        if row >= board_length:
+            return self.recursive_solve_naive(board, 0, 0, digit + 1)
+
+        # We could not find a proper cell to place this digit in the current row.
+        if column >= board_length:
+            return False
+
+        # The digit was already placed in this row, on partially filled board inputs.
+        if board.get_cell(row, column) == digit:
+            return self.recursive_solve_naive(board, row + 1, 0, digit)
+
+        # It is illegal to place this digit in the cell, try the next one.
+        if not guess_cell_valid(board, row, column, digit):
+            return self.recursive_solve_naive(board, row, column + 1, digit)
+        board.set_cell(row, column, digit)
+
+        # Try solving by placing the digit in the current cell or trying in the next one
+        if self.recursive_solve_naive(board, row + 1, 0, digit):
+            return True
+        else:
+            board.clear_cell(row, column)
+            return self.recursive_solve_naive(board, row, column + 1, digit)
+
+    def game_solvable(self, solving_func):
+        return solving_func(self.board, 0, 0, 1)
+
+    def solve_game(self, solving_func):
+        if solving_func(self.board, 0, 0, 1):
+            return str("\n".join(str(x) for x in self.solution["board"]) +
+                       "The number of iterations taken to reach the solution: {}".format(self.solution["iterations"]))
+        else:
+            return False
 
 
 def find_fullest_row(board):
@@ -44,50 +92,6 @@ def find_fullest_row(board):
             max_val = value
             row_idx = idx
     return row_idx
-
-
-def recursive_solve_naive(board, row, column, digit, solution):
-
-    solution["iterations"] += 1
-    # We have placed all digits in all rows, thus found a solution.
-    if digit > board_length:
-        solution["board"] = board.get_all_cells()
-        return True
-
-    # We have placed the current digit in all rows, move on to the next digit.
-    if row >= board_length:
-        return recursive_solve_naive(board, 0, 0, digit + 1, solution)
-
-    # We could not find a proper cell to place this digit in the current row.
-    if column >= board_length:
-        return False
-
-    # The digit was already placed in this row, on partially filled board inputs.
-    if board.get_cell(row, column) == digit:
-        return recursive_solve_naive(board, row + 1, 0, digit, solution)
-
-    # It is illegal to place this digit in the cell, try the next one.
-    if not guess_cell_valid(board, row, column, digit):
-        return recursive_solve_naive(board, row, column + 1, digit, solution)
-    board.set_cell(row, column, digit)
-
-    # Try solving by placing the digit in the current cell or trying in the next one
-    if recursive_solve_naive(board, row + 1, 0, digit, solution):
-        return True
-    else:
-        board.clear_cell(row, column)
-        return recursive_solve_naive(board, row, column + 1, digit, solution)
-
-
-def game_solvable(board, solving_func):
-    solution = {"iterations": 0, "board": []}
-    solving_board = Board(board.get_all_cells())
-    if solving_func(solving_board, 0, 0, 1, solution):
-        return str("\n".join(str(x) for x in solution["board"]) +
-                   "The number of iterations taken to reach the solution: {}".format(solution["iterations"]))
-    else:
-        # TODO make sense of the possibility this is not solvable
-        raise False
 
 
 if __name__ == '__main__':
@@ -110,15 +114,21 @@ if __name__ == '__main__':
                                  ['-', '-', 1, '-', '-', '-', '-', 6, 8],
                                  ['-', '-', 8, 5, '-', '-', '-', 1, '-'],
                                  ['-', 9, '-', '-', '-', '-', 4, '-', '-']])
+    solver = Solver(empty_board)
     print("A trivial empty board's solution with the naive approach:")
-    game_solvable(empty_board, recursive_solve_naive)
+    print(solver.solve_game(solver.recursive_solve_naive))
+    solver = Solver(empty_board)
     print("A trivial empty board's solution with the improved approach:")
-    game_solvable(empty_board, recursive_solve_improved)
+    print(solver.solve_game(solver.recursive_solve_improved))
     print("An easy board's solution with the naive approach:")
-    game_solvable(easy_board, recursive_solve_naive)
+    solver = Solver(easy_board)
+    print(solver.solve_game(solver.recursive_solve_naive))
     print("An easy board's solution with the improved approach:")
-    game_solvable(easy_board, recursive_solve_improved)
+    solver = Solver(easy_board)
+    print(solver.solve_game(solver.recursive_solve_improved))
     print("The hardest board ever created's solution(this may take some time) with the naive approach:")
-    game_solvable(hardest_known_board, recursive_solve_naive)
+    solver = Solver(hardest_known_board)
+    print(solver.solve_game(solver.recursive_solve_naive))
     print("The hardest board ever created's solution(this may take some time) with the improved approach:")
-    game_solvable(hardest_known_board, recursive_solve_improved)
+    solver = Solver(hardest_known_board)
+    print(solver.solve_game(solver.recursive_solve_improved))
