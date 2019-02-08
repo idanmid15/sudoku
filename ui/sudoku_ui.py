@@ -2,6 +2,7 @@
 from tkinter import Tk, Canvas, Frame, Button, BOTH, TOP, BOTTOM
 import tkinter.messagebox
 from board import empty_sign, Board
+import copy
 from solver import game_solvable, recursive_solve_improved
 from movement import guess_cell_valid
 
@@ -39,7 +40,8 @@ class SudokuUi(Frame):
         self.canvas.bind("<Key>", self.__key_pressed)
         
     def __clear_answers(self):
-        self.board = Board(self.original_board)
+        self.canvas.delete("numbers")
+        self.board = Board(copy.deepcopy(self.original_board))
         self.canvas.delete("victory")
         self.__draw_puzzle()
 
@@ -63,7 +65,6 @@ class SudokuUi(Frame):
             self.canvas.create_line(x0, y0, x1, y1, fill=color)  # Horizontal line
 
     def __draw_puzzle(self):
-        self.canvas.delete("numbers")
         for i in range(9):
             for j in range(9):
                 current_cell_value = self.board.get_cell(i, j)
@@ -144,6 +145,14 @@ class SudokuUi(Frame):
 
 if __name__ == '__main__':
     root = Tk()
-    SudokuUi(root, Board())
+    SudokuUi(root, Board([[2, '-', 6, 3, '-', '-', '-', '-', 4],
+                        ['-', '-', 3, 6, 7, 1, 2, '-', 9],
+                        [5, 1, '-', '-', '-', 4, 6, '-', 3],
+                        [4, 3, '-', '-', 6, '-', '-', 7, 2],
+                        [1, 7, '-', 4, '-', '-', 9, 3, '-'],
+                        [9, '-', '-', 7, 3, 5, '-', '-', 8],
+                        ['-', 8, 1, '-', '-', 7, 3, 9, '-'],
+                        ['-', '-', 9, 8, 1, '-', 4, 2, '-'],
+                        ['-', 2, 4, '-', 9, 3, '-', 6, '-']]))
     root.geometry("%dx%d" % (WIDTH, HEIGHT + 40))
     root.mainloop()
